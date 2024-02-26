@@ -1,0 +1,20 @@
+
+
+#ENV
+ID=<YOUR_ID>>
+
+export APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY= 
+export APPDYNAMICS_AGENT_ACCOUNT_NAME=
+export APPDYNAMICS_CONTROLLER_HOST_NAME=
+export APPDYNAMICS_CONTROLLER_PORT=443 
+export APPDYNAMICS_CONTROLLER_SSL_ENABLED=true 
+export APPDYNAMICS_AGENT_APPLICATION_NAME=bankLab2$ID 
+export APPDYNAMICS_AGENT_TIER_NAME=bankingDemo 
+export APPDYNAMICS_AGENT_NODE_NAME=api
+
+
+#APM AGENT VARIABLES
+export JAVA_TOOL_OPTIONS="-javaagent:appd_agent/javaagent.jar"
+
+java -Dappdynamics.opentelemetry.enabled=true -jar banking-2.1.0.jar
+

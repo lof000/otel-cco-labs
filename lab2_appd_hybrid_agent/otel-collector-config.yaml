@@ -1,0 +1,44 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+      http:
+
+exporters:
+  logging:
+    verbosity: detailed
+  jaeger:
+    endpoint: jaeger:14250
+    tls:
+      insecure: true
+  otlphttp:  
+    auth: 
+      authenticator: oauth2client 
+    traces_endpoint: https://<<your_host>>/data/v1/trace 
+    logs_endpoint: https://<<your_host>>/data/v1/logs 
+    metrics_endpoint: https://<<your_host>>/data/v1/metrics 
+
+#processors:
+#  batch: #### Optional for trace batching for AppDynamics Cloud
+#    send_batch_max_size: 1000
+#    send_batch_size: 1000
+#    timeout: 10s
+
+extensions: #### Mandatory for AppDynamics Cloud
+  oauth2client: 
+    client_id: xxx
+    client_secret: xxx 
+    token_url: https://<<your_host>>/auth/xxxxx/default/oauth2/token 
+service:
+  extensions: #### Mandatory for AppD Cloud
+    - oauth2client
+  pipelines:
+    traces:
+      receivers: [otlp]
+      exporters: [logging,jaeger,otlphttp]
+    metrics:
+      receivers: [otlp]
+      exporters: [logging]
+    logs:
+      receivers: [otlp]
+      exporters: [logging,otlphttp]      
