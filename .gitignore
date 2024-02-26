@@ -24,3 +24,6 @@ hs_err_pid*
 replay_pid*
 lab1_otel_autointrumentation /lab1_otel_autointrumentation.docx
 .DS_Store
+lab3_manual_instrumentation/.vscode/settings.json
+lab3_manual_instrumentation/Digital-java-Backends/.mvn/wrapper/maven-wrapper.jar
+lab3_manual_instrumentation/Digital-java-Backends/.mvn/wrapper/maven-wrapper.jar
