@@ -1,6 +1,7 @@
-# Lab 2 - Auto Instrumentation with Cisco Hybrid Agent
+# Lab 1 - Auto Instrumentation with OpenTelemetry Agent
 
-How to use the AppDynamics Agent to send data to AppDynamics and to Cisco Observability Platform at the same time using OpenTelemetry Collector.
+How to use the OpenTelemetry java agent to instrument your code and send data to AppDynamics.
+
 
 
 
