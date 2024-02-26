@@ -1,7 +1,7 @@
 # OpenTelemetry and Cisco Observability Platform
-### Intrumentation Labs
+### Instrumentation Labs
 
-Here we have some labs to show how to instruent java code using OpenTelemetry and send the data to Cisto Observability Platform.
+Here we have some labs to show how to install java code using OpenTelemetry and send the data to the Cisco Observability Platform.
 
 <!--ts-->
 
