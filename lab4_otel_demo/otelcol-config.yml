@@ -1,0 +1,75 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+receivers:
+  otlp:
+    protocols:
+      grpc:
+      http:
+        cors:
+          allowed_origins:
+            - "http://*"
+            - "https://*"
+  httpcheck/frontendproxy:
+    targets:
+      - endpoint: http://frontendproxy:${env:ENVOY_PORT}
+
+exporters:
+  debug:
+  otlp:
+    endpoint: "jaeger:4317"
+    tls:
+      insecure: true
+  otlphttp/prometheus:
+    endpoint: "http://prometheus:9090/api/v1/otlp"
+    tls:
+      insecure: true
+  opensearch:
+    logs_index: otel
+    http:
+      endpoint: "http://opensearch:9200"
+      tls:
+        insecure: true
+
+  otlphttp/cco: 
+    auth:
+      authenticator: oauth2client
+    traces_endpoint: https://xxxx/data/v1/trace
+    metrics_endpoint: https://xxxx/data/v1/metrics
+    logs_endpoint: https://xxxx/data/v1/logs
+
+extensions:
+  health_check:
+
+  oauth2client:
+    client_id: xxxx
+    client_secret: xxxx
+    token_url: https://xxxx/auth/xxxx/default/oauth2/token
+
+processors:
+  batch:
+  resource:
+    attributes:
+      # The below is for testing purposes ONLY!  This will override any existing `service.namespace` value!
+      - key: service.namespace
+        action: upsert
+        value: "xxxx"
+
+connectors:
+  spanmetrics:
+
+service:
+  extensions: [ oauth2client ]
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlp, debug, spanmetrics,otlphttp/cco]
+    metrics:
+      receivers: [httpcheck/frontendproxy, otlp, spanmetrics]
+      processors: [batch]
+      exporters: [otlphttp/prometheus, debug,otlphttp/cco]
+    logs:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [opensearch, debug,otlphttp/cco]
