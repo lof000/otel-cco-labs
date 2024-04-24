@@ -1,0 +1,48 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+      http:
+
+exporters:
+  logging:
+    verbosity: detailed
+  otlphttp/cco: 
+    auth:
+      authenticator: oauth2client 
+    traces_endpoint: https://xxx/data/v1/trace 
+    logs_endpoint: https://xxx/data/v1/logs 
+    metrics_endpoint: https://xxx/data/v1/metrics 
+
+extensions: #### Mandatory for AppDynamics Cloud
+  oauth2client: 
+    client_id: xxx 
+    client_secret: xxx 
+    token_url: xxx
+    
+## tail sampling - traces with string attribute
+processors:
+  tail_sampling:
+    decision_wait: 30s
+    num_traces: 100
+    expected_new_traces_per_sec: 100
+    policies:
+      [
+          {
+            name: test-policy-6,
+            type: string_attribute,
+            string_attribute: {key: url.query, values: [idcode=DF]}
+          }            
+      ]
+
+service:
+  extensions: #### Mandatory for AppD Cloud
+    - oauth2client
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [tail_sampling]      
+      exporters: [logging,otlphttp/cco]
+    logs:
+      receivers: [otlp]
+      exporters: [logging,otlphttp/cco]   

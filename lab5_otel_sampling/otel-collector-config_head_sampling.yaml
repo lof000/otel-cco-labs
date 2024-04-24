@@ -1,0 +1,39 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+      http:
+
+exporters:
+  logging:
+    verbosity: detailed
+  otlphttp/cco: 
+    auth:
+      authenticator: oauth2client 
+    traces_endpoint: https://xx/data/v1/trace 
+    logs_endpoint: https://xx/data/v1/logs 
+    metrics_endpoint: https://xx/data/v1/metrics 
+
+extensions: #### Mandatory for AppDynamics Cloud
+  oauth2client: 
+    client_id: xxx 
+    client_secret: xxxx
+    token_url: xxx
+
+# head sampling - probabilistic
+processors:
+  probabilistic_sampler:
+    hash_seed: 22
+    sampling_percentage: 10
+
+service:
+  extensions: #### Mandatory for AppD Cloud
+    - oauth2client
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [probabilistic_sampler]      
+      exporters: [logging,otlphttp/cco]
+    logs:
+      receivers: [otlp]
+      exporters: [logging,otlphttp/cco]   

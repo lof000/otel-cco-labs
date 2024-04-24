@@ -1,0 +1,53 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+      http:
+
+exporters:
+  logging:
+    verbosity: detailed
+  otlphttp/cco: 
+    auth:
+      authenticator: oauth2client 
+    traces_endpoint: https://xxx/data/v1/trace 
+    logs_endpoint: https://xxx/data/v1/logs 
+    metrics_endpoint: https://xxx/data/v1/metrics 
+
+extensions: #### Mandatory for AppDynamics Cloud
+  oauth2client: 
+    client_id: xxx
+    client_secret: xxx
+    token_url: xxx
+    
+## tail sampling - traces with latency higher than 2s OR traces with errors
+processors:
+  tail_sampling:
+    decision_wait: 30s
+    num_traces: 100
+    expected_new_traces_per_sec: 100
+    policies:
+      [
+          {
+            name: test-policy-2,
+            type: latency,
+            latency: {threshold_ms: 2000}
+          },
+          {
+            name: test-policy-5,
+            type: status_code,
+            status_code: {status_codes: [ERROR]}
+          }            
+      ]
+
+service:
+  extensions: #### Mandatory for AppD Cloud
+    - oauth2client
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [tail_sampling]      
+      exporters: [logging,otlphttp/cco]
+    logs:
+      receivers: [otlp]
+      exporters: [logging,otlphttp/cco]   
