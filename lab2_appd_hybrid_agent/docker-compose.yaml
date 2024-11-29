@@ -27,7 +27,7 @@ services:
       - "55681:55681" # http
     environment:
       # uses .env file
-      X_API_KEY: "rG696B1cphkvcpYvwgR53DNxOkHa2WT5FAJG3SF6"
+      X_API_KEY: "xxxx"
     depends_on:
       - jaeger
 
